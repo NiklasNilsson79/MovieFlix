@@ -1,11 +1,10 @@
 export interface IShow {
   id: number;
+  backdrop_path: string;
+  original_language: string;
   name: string;
   poster_path: string;
-  first_air_date: string;
-  runtime: number;
-  vote_average: number;
   overview: string;
-  genre_ids: [{ name: string }];
-  backdrop_path: string;
+  first_air_date: string;
+  vote_average: number;
 }

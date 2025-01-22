@@ -1,4 +1,5 @@
-import { IShow } from './models/IShow.js';
+import { IShow } from './models/IShow';
+import { listShows, searchShows } from './services/shows-services.js';
 
 // Här hämtas referense till html element...
 document
@@ -6,58 +7,18 @@ document
   .addEventListener('submit', handleSearch);
 
 const initApp = () => {
-  listShows();
+  listShows().then((shows) => displayShows(shows));
 };
 
-const listShows = async (): Promise<void> => {
-  const key = 'c225640b9109317dc84c9f661f0ca0ba';
-  const url = `https://api.themoviedb.org/3/discover/tv?api_key=${key}`;
-
-  try {
-    const response = await fetch(url);
-    console.log('API Response:', response);
-    if (response.ok) {
-      const body = await response.json(); //json() hämtar hela body paketet i http response paketet
-
-      const shows = body.results as IShow[];
-      displayShows(shows);
-    } else {
-      throw new Error('Det gick galet!');
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const searchShows = async (): Promise<void> => {
+const filterShows = async () => {
   const filter: string =
     document.querySelector<HTMLInputElement>('#searchInput')!.value;
 
-  if (filter) {
-    const key = 'c225640b9109317dc84c9f661f0ca0ba';
-    const url = `https://api.themoviedb.org/3/search/tv?query=${filter}&api_key=${key}`;
-
-    try {
-      const response = await fetch(url);
-
-      if (response.ok) {
-        const body = await response.json();
-        const shows = body.results as IShow[];
-        displayShows(shows);
-      } else {
-        throw new Error('Det gick galet!');
-      }
-    } catch (error) {
-      console.log(error);
-      listShows();
-    }
-  } else {
-    listShows();
-  }
+  const shows = await searchShows(filter);
+  displayShows(shows);
 };
 
 const displayShows = (shows: Array<IShow>) => {
-  // Hämta en referens till placeholdern i html filen...
   const app = document.querySelector('#top-series') as HTMLDivElement;
   app.innerHTML = '';
 
@@ -77,7 +38,7 @@ const displayShows = (shows: Array<IShow>) => {
     image.alt = `${show.name}`;
     image.src = show.poster_path
       ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
-      : `../dist/assets/images/No-Image.jpg`;
+      : `../../dist/assets/images/No-Image.jpg`;
 
     // Sätt ihop html element i rätt ordning...
     // Länk och bilden...
@@ -106,7 +67,7 @@ const displayShows = (shows: Array<IShow>) => {
 
 async function handleSearch(e: SubmitEvent) {
   e.preventDefault();
-  await searchShows();
+  await filterShows();
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
