@@ -62,7 +62,7 @@ main {
   padding: 2rem;
 }
 
-footer div {
+.pagination div {
   display: flex;
   justify-content: center;
   margin: 1rem 2rem 3rem 2rem;
@@ -71,7 +71,7 @@ footer div {
   border-top: solid 2px #f4f4f4;
   border-bottom: solid 2px #f4f4f4;
 }
-footer .navigation-btn {
+.pagination .navigation-btn {
   cursor: pointer;
 }
 

@@ -3,6 +3,23 @@ import { createShowCard, displayNotFoundMessage, hideNotFoundMessage, } from './
 document
     .querySelector('#searchForm')
     .addEventListener('submit', handleSearch);
+document
+    .querySelector('#searchForm')
+    .addEventListener('submit', handleSearch);
+document
+    .querySelector('#gotoFirst')
+    .addEventListener('click', handleGoToFirstPage);
+document
+    .querySelector('#gotoPrevious')
+    .addEventListener('click', handleGoToPreviousPage);
+document
+    .querySelector('#gotoNext')
+    .addEventListener('click', handleGoToNextPage);
+document
+    .querySelector('#gotoLast')
+    .addEventListener('click', handleGoToLastPage);
+const pageNumber = document.querySelector('#pageNo');
+const pages = document.querySelector('#pages');
 const initApp = () => {
     let filter = '';
     if (document.referrer.includes('movie')) {
@@ -12,18 +29,24 @@ const initApp = () => {
         filter = localStorage.getItem('filter');
     }
     if (filter) {
-        searchShows(filter).then((shows) => displayShows(shows));
+        searchShows(filter).then((response) => {
+            displayShows(response.results);
+            updatePagination(response.totalPages, response.page);
+        });
         document.querySelector('#searchInput').value = filter;
     }
     else {
-        listShows().then((shows) => displayShows(shows));
+        listShows().then((response) => {
+            displayShows(response.results);
+            updatePagination(response.totalPages, response.page);
+        });
     }
 };
 const filterShows = async () => {
     const filter = document.querySelector('#searchInput').value;
     localStorage.setItem('filter', filter);
-    const shows = await searchShows(filter);
-    displayShows(shows);
+    const response = await searchShows(filter);
+    displayShows(response.results);
 };
 const displayShows = (shows) => {
     const app = document.querySelector('#top-series');
@@ -38,6 +61,22 @@ const displayShows = (shows) => {
         }
     }
 };
+const updatePagination = (pages, page) => {
+    document.querySelector('#pageNo').innerHTML = page.toString();
+    document.querySelector('#pages').innerHTML = pages.toString();
+};
+async function handleGoToFirstPage() {
+    console.log('går till första sidan');
+}
+async function handleGoToPreviousPage() {
+    console.log('går till föregående sida');
+}
+async function handleGoToNextPage() {
+    console.log('går till nästa sida');
+}
+async function handleGoToLastPage() {
+    console.log('går till sista sidan');
+}
 async function handleSearch(e) {
     e.preventDefault();
     await filterShows();

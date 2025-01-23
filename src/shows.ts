@@ -10,6 +10,29 @@ document
   .querySelector<HTMLFormElement>('#searchForm')!
   .addEventListener('submit', handleSearch);
 
+document
+  .querySelector<HTMLFormElement>('#searchForm')!
+  .addEventListener('submit', handleSearch);
+
+document
+  .querySelector<HTMLSpanElement>('#gotoFirst')!
+  .addEventListener('click', handleGoToFirstPage);
+
+document
+  .querySelector<HTMLSpanElement>('#gotoPrevious')!
+  .addEventListener('click', handleGoToPreviousPage);
+
+document
+  .querySelector<HTMLSpanElement>('#gotoNext')!
+  .addEventListener('click', handleGoToNextPage);
+
+document
+  .querySelector<HTMLSpanElement>('#gotoLast')!
+  .addEventListener('click', handleGoToLastPage);
+
+const pageNumber = document.querySelector<HTMLSpanElement>('#pageNo');
+const pages = document.querySelector<HTMLSpanElement>('#pages');
+
 const initApp = () => {
   let filter: string | null = '';
 
@@ -20,10 +43,16 @@ const initApp = () => {
   }
 
   if (filter) {
-    searchShows(filter).then((shows) => displayShows(shows));
+    searchShows(filter).then((response) => {
+      displayShows(response.results as IShow[]);
+      updatePagination(response.totalPages, response.page);
+    });
     document.querySelector<HTMLInputElement>('#searchInput')!.value = filter;
   } else {
-    listShows().then((shows) => displayShows(shows));
+    listShows().then((response) => {
+      displayShows(response.results as IShow[]);
+      updatePagination(response.totalPages, response.page);
+    });
   }
 };
 
@@ -33,8 +62,8 @@ const filterShows = async () => {
 
   localStorage.setItem('filter', filter);
 
-  const shows = await searchShows(filter);
-  displayShows(shows);
+  const response = await searchShows(filter);
+  displayShows(response.results as IShow[]);
 };
 
 const displayShows = (shows: Array<IShow>) => {
@@ -51,6 +80,24 @@ const displayShows = (shows: Array<IShow>) => {
     }
   }
 };
+
+const updatePagination = (pages: number, page: number) => {
+  document.querySelector('#pageNo')!.innerHTML = page.toString();
+  document.querySelector('#pages')!.innerHTML = pages.toString();
+};
+
+async function handleGoToFirstPage(): Promise<void> {
+  console.log('går till första sidan');
+}
+async function handleGoToPreviousPage(): Promise<void> {
+  console.log('går till föregående sida');
+}
+async function handleGoToNextPage(): Promise<void> {
+  console.log('går till nästa sida');
+}
+async function handleGoToLastPage(): Promise<void> {
+  console.log('går till sista sidan');
+}
 
 async function handleSearch(e: SubmitEvent) {
   e.preventDefault();
