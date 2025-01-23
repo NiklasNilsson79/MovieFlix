@@ -1,4 +1,10 @@
-MovieFlix
-This project serves as a sandbox for experimenting with JavaScript, enhancing API integration skills, and building an interactive, visually appealing web application.
+# MovieFlix
 
-MovieFlix is a project designed to practice and enhance my JavaScript skills by building a responsive web application for exploring movies and TV shows. This application interacts with The Movie Database (TMDb) API to fetch and display details about popular, top-rated, and upcoming content.
+Här är startkoden för vårt TypeScript projekt MovieFlix
+
+För att komma igång så måste ni hämta koden och installera beroendena
+som vi behöver. Just nu är det endast TypeScript som måste finnas tillgängligt.
+
+Öppna upp projektet i VS Code och öppna upp bash terminalen i VS Code.
+Skriv in följande kommando:
+`npm i` eller `npm install`

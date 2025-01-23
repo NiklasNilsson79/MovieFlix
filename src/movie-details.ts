@@ -8,9 +8,9 @@ const initApp = () => {
 };
 
 const displayMovie = (movie: IMovieDetail) => {
-  const div = document.createElement('div');
-  div.appendChild(createMovieDetailsDisplay(movie));
-  document.querySelector('#details')?.appendChild(div);
+  document
+    .querySelector('#details')
+    ?.appendChild(createMovieDetailsDisplay(movie));
   document
     .querySelector('#details')
     ?.appendChild(createOverlay(movie.backdrop_path));

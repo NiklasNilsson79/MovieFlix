@@ -89,6 +89,13 @@ h2 {
   padding-bottom: 3rem;
 }
 
+#message {
+  text-align: center;
+  border: solid 2px #828282;
+  border-radius: 0.4rem;
+  font-size: 1.2rem;
+}
+
 .page-background {
   position: absolute;
   top: 0;

@@ -1,52 +1,41 @@
 import { listShows, searchShows } from './services/shows-services.js';
-// Här hämtas referense till html element...
+import { createShowCard, displayNotFoundMessage, hideNotFoundMessage, } from './utilities/dom.js';
 document
     .querySelector('#searchForm')
     .addEventListener('submit', handleSearch);
 const initApp = () => {
-    listShows().then((shows) => displayShows(shows));
+    let filter = '';
+    if (document.referrer.includes('movie')) {
+        localStorage.removeItem('filter');
+    }
+    else {
+        filter = localStorage.getItem('filter');
+    }
+    if (filter) {
+        searchShows(filter).then((shows) => displayShows(shows));
+        document.querySelector('#searchInput').value = filter;
+    }
+    else {
+        listShows().then((shows) => displayShows(shows));
+    }
 };
 const filterShows = async () => {
     const filter = document.querySelector('#searchInput').value;
+    localStorage.setItem('filter', filter);
     const shows = await searchShows(filter);
     displayShows(shows);
 };
 const displayShows = (shows) => {
     const app = document.querySelector('#top-series');
     app.innerHTML = '';
-    for (let show of shows) {
-        // Skapa alla element som vi behöver för att skapa utseendet...
-        const div = document.createElement('div');
-        const imageAnchor = document.createElement('a');
-        const image = document.createElement('img');
-        const cardBody = document.createElement('div');
-        const heading = document.createElement('h5');
-        const p = document.createElement('p');
-        const small = document.createElement('small');
-        // Sätta klasser och data på elementen...
-        div.classList.add('card');
-        imageAnchor.href = `./show-details.html?id=${show.id}`;
-        image.alt = `${show.name}`;
-        image.src = show.poster_path
-            ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
-            : `../../dist/assets/images/No-Image.jpg`;
-        // Sätt ihop html element i rätt ordning...
-        // Länk och bilden...
-        imageAnchor.appendChild(image);
-        div.appendChild(imageAnchor);
-        // cardBody och heading för att sätta rubrik på filmen...
-        cardBody.classList.add('card-body');
-        heading.classList.add('card-title');
-        heading.textContent = show.name;
-        // Hantera information för premiär datum...
-        p.classList.add('card-text');
-        p.classList.add('text-muted');
-        small.textContent = `Premiär datum: ${show.first_air_date}`;
-        p.appendChild(small);
-        cardBody.appendChild(heading);
-        cardBody.appendChild(p);
-        div.appendChild(cardBody);
-        app.appendChild(div);
+    if (shows.length === 0) {
+        displayNotFoundMessage('Vi hittar ingen TV-serie med sökbegrepp:');
+    }
+    else {
+        hideNotFoundMessage();
+        for (let show of shows) {
+            app.appendChild(createShowCard(show));
+        }
     }
 };
 async function handleSearch(e) {
