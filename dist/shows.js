@@ -29,25 +29,29 @@ const initApp = () => {
         filter = localStorage.getItem('filter');
     }
     if (filter) {
-        searchShows(filter).then((response) => {
-            displayShows(response.results);
-            updatePagination(response.totalPages, response.page);
-        });
+        loadShows();
         document.querySelector('#searchInput').value = filter;
     }
     else {
-        listShows().then((response) => {
-            displayShows(response.results);
-            updatePagination(response.totalPages, response.page);
-        });
+        loadShows();
     }
+};
+const loadShows = async (page = 1) => {
+    const filter = localStorage.getItem('filter');
+    let response;
+    if (filter) {
+        response = await searchShows(filter, page);
+    }
+    else {
+        response = await listShows(page);
+    }
+    displayShows(response.results);
+    updatePagination(response.totalPages, response.page);
 };
 const filterShows = async () => {
     const filter = document.querySelector('#searchInput').value;
     localStorage.setItem('filter', filter);
-    const response = await searchShows(filter);
-    displayShows(response.results);
-    updatePagination(response.totalPages, response.page);
+    loadShows();
 };
 const displayShows = (shows) => {
     const app = document.querySelector('#top-series');
@@ -67,16 +71,32 @@ const updatePagination = (pages, page) => {
     document.querySelector('#pages').innerHTML = pages.toString();
 };
 async function handleGoToFirstPage() {
-    console.log('går till första sidan');
+    const totalPages = +pages.innerHTML;
+    await loadShows(1);
 }
 async function handleGoToPreviousPage() {
-    console.log('går till föregående sida');
+    let page = +pageNumber.innerHTML;
+    page > 1 ? page-- : 1;
+    await loadShows(page);
 }
 async function handleGoToNextPage() {
-    console.log('går till nästa sida');
+    const totalPages = +pages.innerHTML;
+    let page = +pageNumber.innerHTML;
+    page < totalPages ? page++ : 500;
+    if (page > 500) {
+        await loadShows(500);
+    }
+    else {
+        await loadShows(page);
+    }
 }
 async function handleGoToLastPage() {
-    console.log('går till sista sidan');
+    if (+pages.innerHTML < 501) {
+        await loadShows(+pages.innerHTML);
+    }
+    else {
+        await loadShows(500);
+    }
 }
 async function handleSearch(e) {
     e.preventDefault();

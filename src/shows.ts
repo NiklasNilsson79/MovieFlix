@@ -1,4 +1,5 @@
 import { IShow } from './models/IShow';
+import { ResponseType } from './models/ResponseType';
 import { listShows, searchShows } from './services/shows-services.js';
 import {
   createShowCard,
@@ -43,17 +44,25 @@ const initApp = () => {
   }
 
   if (filter) {
-    searchShows(filter).then((response) => {
-      displayShows(response.results as IShow[]);
-      updatePagination(response.totalPages, response.page);
-    });
+    loadShows();
     document.querySelector<HTMLInputElement>('#searchInput')!.value = filter;
   } else {
-    listShows().then((response) => {
-      displayShows(response.results as IShow[]);
-      updatePagination(response.totalPages, response.page);
-    });
+    loadShows();
   }
+};
+
+const loadShows = async (page: number = 1) => {
+  const filter = localStorage.getItem('filter');
+  let response: ResponseType;
+
+  if (filter) {
+    response = await searchShows(filter, page);
+  } else {
+    response = await listShows(page);
+  }
+
+  displayShows(response.results as IShow[]);
+  updatePagination(response.totalPages, response.page);
 };
 
 const filterShows = async () => {
@@ -62,9 +71,7 @@ const filterShows = async () => {
 
   localStorage.setItem('filter', filter);
 
-  const response = await searchShows(filter);
-  displayShows(response.results as IShow[]);
-  updatePagination(response.totalPages, response.page);
+  loadShows();
 };
 
 const displayShows = (shows: Array<IShow>) => {
@@ -88,16 +95,31 @@ const updatePagination = (pages: number, page: number) => {
 };
 
 async function handleGoToFirstPage(): Promise<void> {
-  console.log('går till första sidan');
+  const totalPages: number = +pages!.innerHTML;
+  await loadShows(1);
 }
 async function handleGoToPreviousPage(): Promise<void> {
-  console.log('går till föregående sida');
+  let page: number = +pageNumber!.innerHTML;
+  page > 1 ? page-- : 1;
+  await loadShows(page);
 }
 async function handleGoToNextPage(): Promise<void> {
-  console.log('går till nästa sida');
+  const totalPages: number = +pages!.innerHTML;
+  let page: number = +pageNumber!.innerHTML;
+
+  page < totalPages ? page++ : 500;
+  if (page > 500) {
+    await loadShows(500);
+  } else {
+    await loadShows(page);
+  }
 }
 async function handleGoToLastPage(): Promise<void> {
-  console.log('går till sista sidan');
+  if (+pages!.innerHTML < 501) {
+    await loadShows(+pages!.innerHTML);
+  } else {
+    await loadShows(500);
+  }
 }
 
 async function handleSearch(e: SubmitEvent) {

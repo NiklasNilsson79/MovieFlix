@@ -1,5 +1,6 @@
 import { IMovie } from './models/IMovie.js';
 import { IShow } from './models/IShow.js';
+import { ResponseType } from './models/ResponseType.js';
 import { listMovies, searchMovies } from './services/movies-services.js';
 import {
   createMovieCard,
@@ -40,17 +41,25 @@ const initApp = async () => {
   }
 
   if (filter) {
-    searchMovies(filter).then((response) => {
-      displayMovies(response.results as IMovie[]);
-      updatePagination(response.totalPages, response.page);
-    });
+    loadMovies();
     document.querySelector<HTMLInputElement>('#searchInput')!.value = filter;
   } else {
-    listMovies().then((response) => {
-      displayMovies(response.results as IMovie[]);
-      updatePagination(response.totalPages, response.page);
-    });
+    loadMovies();
   }
+};
+
+const loadMovies = async (page: number = 1) => {
+  const filter = localStorage.getItem('filter');
+  let response: ResponseType;
+
+  if (filter) {
+    response = await searchMovies(filter, page);
+  } else {
+    response = await listMovies(page);
+  }
+
+  displayMovies(response.results as IMovie[]);
+  updatePagination(response.totalPages, response.page);
 };
 
 const filterMovies = async () => {
@@ -58,10 +67,7 @@ const filterMovies = async () => {
     document.querySelector<HTMLInputElement>('#searchInput')!.value;
 
   localStorage.setItem('filter', filter);
-  const response = await searchMovies(filter);
-
-  displayMovies(response.results as IMovie[]);
-  updatePagination(response.totalPages, response.page);
+  loadMovies();
 };
 
 const displayMovies = (movies: Array<IMovie>) => {
@@ -84,16 +90,33 @@ const updatePagination = (pages: number, page: number) => {
 };
 
 async function handleGoToFirstPage(): Promise<void> {
-  console.log('går till första sidan');
+  const totalPages: number = +pages!.innerHTML;
+  await loadMovies(1);
 }
 async function handleGoToPreviousPage(): Promise<void> {
-  console.log('går till föregående sida');
+  let page: number = +pageNumber!.innerHTML;
+  page > 1 ? page-- : 1;
+  await loadMovies(page);
 }
 async function handleGoToNextPage(): Promise<void> {
-  console.log('går till nästa sida');
+  const totalPages: number = +pages!.innerHTML;
+  let page: number = +pageNumber!.innerHTML;
+
+  page < totalPages ? page++ : 500;
+
+  if (page > 500) {
+    await loadMovies(500);
+  } else {
+    await loadMovies(page);
+  }
 }
+
 async function handleGoToLastPage(): Promise<void> {
-  console.log('går till sista sidan');
+  if (+pages!.innerHTML < 501) {
+    await loadMovies(+pages!.innerHTML);
+  } else {
+    await loadMovies(500);
+  }
 }
 
 async function handleSearch(e: SubmitEvent) {
