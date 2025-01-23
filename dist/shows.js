@@ -47,6 +47,7 @@ const filterShows = async () => {
     localStorage.setItem('filter', filter);
     const response = await searchShows(filter);
     displayShows(response.results);
+    updatePagination(response.totalPages, response.page);
 };
 const displayShows = (shows) => {
     const app = document.querySelector('#top-series');

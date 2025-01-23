@@ -61,6 +61,7 @@ const filterMovies = async () => {
   const response = await searchMovies(filter);
 
   displayMovies(response.results as IMovie[]);
+  updatePagination(response.totalPages, response.page);
 };
 
 const displayMovies = (movies: Array<IMovie>) => {

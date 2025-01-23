@@ -1,11 +1,11 @@
 import { fetchData } from '../utilities/httpClient.js';
-export const listMovies = async () => {
-    const response = await fetchData('discover/movie');
+export const listMovies = async (page = 1) => {
+    const response = await fetchData('discover/movie', page);
     return mapData(response);
 };
-export const searchMovies = async (filter) => {
+export const searchMovies = async (filter, page = 1) => {
     if (filter) {
-        const response = await fetchData(`search/movie?query=${filter}`);
+        const response = await fetchData('search/movie', page, filter);
         return mapData(response);
     }
     else {

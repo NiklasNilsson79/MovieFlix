@@ -3,14 +3,17 @@ import { IShow } from '../models/IShow';
 import { IShowDetail } from '../models/IShowDetail';
 import { fetchData } from '../utilities/httpClient.js';
 
-export const listShows = async (): Promise<ResponseType> => {
-  const response = await fetchData('discover/tv');
+export const listShows = async (page: number = 1): Promise<ResponseType> => {
+  const response = await fetchData('discover/tv', page);
   return mapData(response);
 };
 
-export const searchShows = async (filter: string): Promise<ResponseType> => {
+export const searchShows = async (
+  filter: string,
+  page: number = 1
+): Promise<ResponseType> => {
   if (filter) {
-    const response = await fetchData(`search/tv?query=${filter}`);
+    const response = await fetchData('search/tv', page, filter);
     return mapData(response);
   } else {
     return listShows();

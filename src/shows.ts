@@ -64,6 +64,7 @@ const filterShows = async () => {
 
   const response = await searchShows(filter);
   displayShows(response.results as IShow[]);
+  updatePagination(response.totalPages, response.page);
 };
 
 const displayShows = (shows: Array<IShow>) => {

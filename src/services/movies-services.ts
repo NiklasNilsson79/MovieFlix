@@ -3,15 +3,18 @@ import { IMovie } from '../models/IMovie';
 import { IMovieDetail } from '../models/IMovieDetail';
 import { fetchData } from '../utilities/httpClient.js';
 
-export const listMovies = async (): Promise<ResponseType> => {
-  const response = await fetchData('discover/movie');
+export const listMovies = async (page: number = 1): Promise<ResponseType> => {
+  const response = await fetchData('discover/movie', page);
 
   return mapData(response);
 };
 
-export const searchMovies = async (filter: string): Promise<ResponseType> => {
+export const searchMovies = async (
+  filter: string,
+  page: number = 1
+): Promise<ResponseType> => {
   if (filter) {
-    const response = await fetchData(`search/movie?query=${filter}`);
+    const response = await fetchData('search/movie', page, filter);
 
     return mapData(response);
   } else {

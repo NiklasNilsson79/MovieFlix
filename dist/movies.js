@@ -44,6 +44,7 @@ const filterMovies = async () => {
     localStorage.setItem('filter', filter);
     const response = await searchMovies(filter);
     displayMovies(response.results);
+    updatePagination(response.totalPages, response.page);
 };
 const displayMovies = (movies) => {
     const app = document.querySelector('#top-movies');
