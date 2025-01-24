@@ -20,6 +20,7 @@ För att bygga movieFlix har vi använt oss av följande teknologier och verktyg
 
 - **HTML** och **CSS**: För att strukturera och designa användargränssnittet.
 - **JavaScript**: För att implementera interaktivitet och dynamisk datahantering.
+- **TypeScript**: För att förbättra kodens kvalitet och säkerhet genom statisk typkontroll.
 - **API**: Vi använde ett öppet film-API för att hämta filmdata.
 - **JSON-server**: För att skapa en mock-backend och hantera lokal data.
 
