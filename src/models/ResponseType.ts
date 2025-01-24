@@ -1,8 +1,7 @@
-import { IMovie } from './IMovie';
-import { IShow } from './IShow';
+import { IMedia } from './IMedia';
 
 export type ResponseType = {
   page: number;
-  results: IMovie[] | IShow[];
   totalPages: number;
+  results: IMedia[];
 };

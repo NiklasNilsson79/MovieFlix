@@ -1,19 +1,17 @@
-import { IMovieDetail } from './models/IMovieDetail.js';
+import { IMediaDetails } from './models/IMediaDetails.js';
 import { findMovie } from './services/movies-services.js';
-import { createMovieDetailsDisplay, createOverlay } from './utilities/dom.js';
+import { createDetailsDisplay, createOverlay } from './utilities/dom.js';
 
 const initApp = () => {
   const id = location.search.split('=')[1];
   findMovie(id).then((movie) => displayMovie(movie));
 };
 
-const displayMovie = (movie: IMovieDetail) => {
+const displayMovie = (movie: IMediaDetails) => {
+  document.querySelector('#details')?.appendChild(createDetailsDisplay(movie));
   document
     .querySelector('#details')
-    ?.appendChild(createMovieDetailsDisplay(movie));
-  document
-    .querySelector('#details')
-    ?.appendChild(createOverlay(movie.backdrop_path));
+    ?.appendChild(createOverlay(movie.background));
 };
 
 const displayError = () => {};

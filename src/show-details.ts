@@ -1,6 +1,6 @@
-import { IShowDetail } from './models/IShowDetail.js';
+import { IMediaDetails } from './models/IMediaDetails.js';
 import { findShow } from './services/shows-services.js';
-import { createOverlay, createShowDetailsDisplay } from './utilities/dom.js';
+import { createOverlay, createDetailsDisplay } from './utilities/dom.js';
 
 const initApp = () => {
   const id = location.search.split('=')[1];
@@ -8,13 +8,11 @@ const initApp = () => {
   ``;
 };
 
-const displayShow = (show: IShowDetail) => {
+const displayShow = (show: IMediaDetails) => {
+  document.querySelector('#details')?.appendChild(createDetailsDisplay(show));
   document
     .querySelector('#details')
-    ?.appendChild(createShowDetailsDisplay(show));
-  document
-    .querySelector('#details')
-    ?.appendChild(createOverlay(show.backdrop_path));
+    ?.appendChild(createOverlay(show.background));
 };
 
 document.addEventListener('DOMContentLoaded', initApp);

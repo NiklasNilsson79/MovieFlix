@@ -1,20 +1,20 @@
 import { listMovies, searchMovies } from './services/movies-services.js';
-import { createMovieCard, displayNotFoundMessage, hideNotFoundMessage, } from './utilities/dom.js';
+import { createDisplayCard, displayNotFoundMessage, hideNotFoundMessage, } from './utilities/dom.js';
 document
     .querySelector('#searchForm')
     .addEventListener('submit', handleSearch);
 document
     .querySelector('#gotoFirst')
-    .addEventListener('click', handleGoToFirstPage);
+    .addEventListener('click', handleGotoFirstPage);
 document
     .querySelector('#gotoPrevious')
-    .addEventListener('click', handleGoToPreviousPage);
+    .addEventListener('click', handleGotoPrevPage);
 document
     .querySelector('#gotoNext')
-    .addEventListener('click', handleGoToNextPage);
+    .addEventListener('click', handleGotoNextPage);
 document
     .querySelector('#gotoLast')
-    .addEventListener('click', handleGoToLastPage);
+    .addEventListener('click', handleGotoLastPage);
 const pageNumber = document.querySelector('#pageNo');
 const pages = document.querySelector('#pages');
 const initApp = async () => {
@@ -59,7 +59,7 @@ const displayMovies = (movies) => {
     else {
         hideNotFoundMessage();
         for (let movie of movies) {
-            app.appendChild(createMovieCard(movie));
+            app.appendChild(createDisplayCard(movie, 'movie-details.html'));
         }
     }
 };
@@ -67,16 +67,15 @@ const updatePagination = (pages, page) => {
     document.querySelector('#pageNo').innerHTML = page.toString();
     document.querySelector('#pages').innerHTML = pages.toString();
 };
-async function handleGoToFirstPage() {
-    const totalPages = +pages.innerHTML;
+async function handleGotoFirstPage() {
     await loadMovies(1);
 }
-async function handleGoToPreviousPage() {
+async function handleGotoPrevPage() {
     let page = +pageNumber.innerHTML;
     page > 1 ? page-- : 1;
     await loadMovies(page);
 }
-async function handleGoToNextPage() {
+async function handleGotoNextPage() {
     const totalPages = +pages.innerHTML;
     let page = +pageNumber.innerHTML;
     page < totalPages ? page++ : 500;
@@ -87,7 +86,7 @@ async function handleGoToNextPage() {
         await loadMovies(page);
     }
 }
-async function handleGoToLastPage() {
+async function handleGotoLastPage() {
     if (+pages.innerHTML < 501) {
         await loadMovies(+pages.innerHTML);
     }

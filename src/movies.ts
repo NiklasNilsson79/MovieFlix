@@ -1,9 +1,8 @@
-import { IMovie } from './models/IMovie.js';
-import { IShow } from './models/IShow.js';
+import { IMedia } from './models/IMedia.js';
 import { ResponseType } from './models/ResponseType.js';
 import { listMovies, searchMovies } from './services/movies-services.js';
 import {
-  createMovieCard,
+  createDisplayCard,
   displayNotFoundMessage,
   hideNotFoundMessage,
 } from './utilities/dom.js';
@@ -14,19 +13,19 @@ document
 
 document
   .querySelector<HTMLSpanElement>('#gotoFirst')!
-  .addEventListener('click', handleGoToFirstPage);
+  .addEventListener('click', handleGotoFirstPage);
 
 document
   .querySelector<HTMLSpanElement>('#gotoPrevious')!
-  .addEventListener('click', handleGoToPreviousPage);
+  .addEventListener('click', handleGotoPrevPage);
 
 document
   .querySelector<HTMLSpanElement>('#gotoNext')!
-  .addEventListener('click', handleGoToNextPage);
+  .addEventListener('click', handleGotoNextPage);
 
 document
   .querySelector<HTMLSpanElement>('#gotoLast')!
-  .addEventListener('click', handleGoToLastPage);
+  .addEventListener('click', handleGotoLastPage);
 
 const pageNumber = document.querySelector<HTMLSpanElement>('#pageNo');
 const pages = document.querySelector<HTMLSpanElement>('#pages');
@@ -58,7 +57,7 @@ const loadMovies = async (page: number = 1) => {
     response = await listMovies(page);
   }
 
-  displayMovies(response.results as IMovie[]);
+  displayMovies(response.results);
   updatePagination(response.totalPages, response.page);
 };
 
@@ -70,7 +69,7 @@ const filterMovies = async () => {
   loadMovies();
 };
 
-const displayMovies = (movies: Array<IMovie>) => {
+const displayMovies = (movies: Array<IMedia>) => {
   const app = document.querySelector('#top-movies') as HTMLDivElement;
   app.innerHTML = '';
 
@@ -79,7 +78,7 @@ const displayMovies = (movies: Array<IMovie>) => {
   } else {
     hideNotFoundMessage();
     for (let movie of movies) {
-      app.appendChild(createMovieCard(movie));
+      app.appendChild(createDisplayCard(movie, 'movie-details.html'));
     }
   }
 };
@@ -89,16 +88,17 @@ const updatePagination = (pages: number, page: number) => {
   document.querySelector('#pages')!.innerHTML = pages.toString();
 };
 
-async function handleGoToFirstPage(): Promise<void> {
-  const totalPages: number = +pages!.innerHTML;
+async function handleGotoFirstPage(): Promise<void> {
   await loadMovies(1);
 }
-async function handleGoToPreviousPage(): Promise<void> {
+
+async function handleGotoPrevPage(): Promise<void> {
   let page: number = +pageNumber!.innerHTML;
   page > 1 ? page-- : 1;
   await loadMovies(page);
 }
-async function handleGoToNextPage(): Promise<void> {
+
+async function handleGotoNextPage(): Promise<void> {
   const totalPages: number = +pages!.innerHTML;
   let page: number = +pageNumber!.innerHTML;
 
@@ -111,7 +111,7 @@ async function handleGoToNextPage(): Promise<void> {
   }
 }
 
-async function handleGoToLastPage(): Promise<void> {
+async function handleGotoLastPage(): Promise<void> {
   if (+pages!.innerHTML < 501) {
     await loadMovies(+pages!.innerHTML);
   } else {
